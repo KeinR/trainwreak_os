@@ -14,7 +14,7 @@
 ; Move cursor to screen loc and remember
 ; dl < x coord
 ; dh < y coord
-movc:
+bios_movc:
     push ax
     push bx
     
@@ -31,7 +31,7 @@ movc:
 ; bh < color mask (upper 4 bg, lower 4 fg)
 ; cx < repeat
 ; Note: Params are unmodified, except for cx
-putc:
+bios_putc:
     push ax
 
     .loop:
@@ -51,7 +51,7 @@ putc:
 ; print a string
 ; ds:si < zero-term string
 ; Note: ds is unmodified
-print:
+bios_print:
     push ax
     mov ah, 0x0e
 
@@ -68,17 +68,17 @@ print:
     ret
 
 ; Restore cursor to 0, 0
-restc:
+bios_restc:
     push dx
     xor dx, dx
-    call movc
+    call bios_movc
     pop dx
     ret
 
 ; Clears the screen
-cls:
-    call discurs
-    call restc
+bios_cls:
+    call bios_discurs
+    call bios_restc
 
     push ax
     push bx
@@ -87,18 +87,18 @@ cls:
     mov al, ' '
     xor bh, bh
     mov cx, 80*50
-    call putc
+    call bios_putc
 
     pop cx
     pop bx
     pop ax
 
-    call restc
-    call encurs
+    call bios_restc
+    call bios_encurs
     ret
 
 ; Enable the cursor
-encurs:
+bios_encurs:
     push ax
     push cx
 
@@ -113,7 +113,7 @@ encurs:
     ret
 
 ; Disable cursor
-discurs:
+bios_discurs:
     push ax
     push cx
 

@@ -1,6 +1,6 @@
 
 mov si, yay
-call print
+call bios_print
 
 hlt
 

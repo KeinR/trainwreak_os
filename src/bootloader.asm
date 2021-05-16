@@ -22,9 +22,9 @@ boot:
     cli
     cld
 
-    call cls
+    call bios_cls
     mov si, nloading
-    call print
+    call bios_print
 
     ; Read kernel from floppy
 
@@ -43,7 +43,7 @@ boot:
     int 0x13
 
     mov si, nbooting
-    call print
+    call bios_print
 
     ; Configure kernel env and transfer execution
     ; To where the code was loaded
@@ -55,7 +55,7 @@ boot:
     xor ax, ax
     mov ds, ax
     mov si, merr 
-    call print
+    call bios_print
 
     hlt
 
