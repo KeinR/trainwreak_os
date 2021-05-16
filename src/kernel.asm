@@ -1,16 +1,10 @@
 
-mov eax, 0x69
-add eax, 1
-mov si, iqq
-call cls
-mov al, 'a'
-mov bh, 0xF0
-mov cx, 10
-call putc
+mov si, yay
+call print
 
 hlt
 
 %include "src/bios_io.asm"
 
-iqq db `Kernel loaded!\r\n\0`
+yay db `Kernel booted!\r\n\0`
 

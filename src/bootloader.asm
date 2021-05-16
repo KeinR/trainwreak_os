@@ -16,6 +16,7 @@ start: jmp boot
 msg db `Hellow World!\r\nMight want to pack a spare set of knives...\r\n\0`
 nloading db `Loading kernel....\r\n\0`
 nbooting db `Booting kernel....\r\n\0`
+merr db `Kernel exited, that's not right...\r\n\0`
 
 boot:
     cli
@@ -24,7 +25,9 @@ boot:
     call cls
     mov si, nloading
     call print
-    
+
+    ; Read kernel from floppy
+
     mov ax, 0x50
 
     mov es, ax
@@ -42,9 +45,17 @@ boot:
     mov si, nbooting
     call print
 
-    ; Configure kernel env
-    ; mov ds, 0x50
+    ; Configure kernel env and transfer execution
+    ; To where the code was loaded
+    mov ax, 0x50
+    mov ds, ax
     jmp 0x50:0x0
+
+    ; Kernel returned (???)
+    xor ax, ax
+    mov ds, ax
+    mov si, merr 
+    call print
 
     hlt
 
