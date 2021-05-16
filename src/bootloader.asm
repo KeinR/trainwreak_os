@@ -13,32 +13,40 @@ bits 16
 
 start: jmp boot
 
-msg db `Hellow World!\r\nMight want to pack a spare set of knives...\0`
+msg db `Hellow World!\r\nMight want to pack a spare set of knives...\r\n\0`
+nloading db `Loading kernel....\r\n\0`
+nbooting db `Booting kernel....\r\n\0`
 
 boot:
-    ; mov eax, 0xCAFE
-    ; mov edx, 0xBABE
-    xor ax, ax
-    mov ds, ax
+    cli
     cld
 
     call cls
-    mov si, msg
+    mov si, nloading
+    call print
+    
+    mov ax, 0x50
+
+    mov es, ax
+    xor bx, bx
+
+    mov al, 2
+    mov ch, 0
+    mov cl, 2 
+    mov dh, 0 
+    mov dl, 0
+
+    mov ah, 0x02
+    int 0x13
+
+    mov si, nbooting
     call print
 
-    cli
-    hlt
+    ; Configure kernel env
+    ; mov ds, 0x50
+    jmp 0x50:0x0
 
-bios_print:
-   lodsb
-   or al, al  ;zero=end of str
-   jz done    ;get out
-   mov ah, 0x0E
-   mov bh, 0
-   int 0x10
-   jmp bios_print
-done:
-   ret
+    hlt
 
 %include "src/bios_io.asm"
 
