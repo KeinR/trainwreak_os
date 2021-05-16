@@ -3,7 +3,8 @@
 ; -----------------------------------
 ; 
 ; References:
-; https://wiki.osdev.org/Text_Mode_Cursor https://wiki.osdev.org/Babystep2
+; https://wiki.osdev.org/Text_Mode_Cursor
+; https://wiki.osdev.org/Babystep2
 ; https://wiki.osdev.org/Text_mode
 ; http://www.osdever.net/bkerndev/Docs/printing.htm
 ; https://software.intel.com/content/dam/develop/external/us/en/documents-tps/325383-sdm-vol-2abcd.pdf

@@ -1,3 +1,12 @@
+; -----------------------
+; Bootloader
+; ----------------------
+; 
+; References:
+; https://raw.githubusercontent.com/tuhdo/os01/master/Operating_Systems_From_0_to_1.pdf
+; https://software.intel.com/content/dam/develop/external/us/en/documents-tps/253665-sdm-vol-1.pdf
+; https://en.wikipedia.org/wiki/Master_boot_record
+; https://www.nasm.us/xdoc/2.15.05/html/nasmdoc0.html
 
 org 0x7c00
 bits 16
