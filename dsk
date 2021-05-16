@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+# Create director skeleton
+
+mkdir -p build
+mkdir -p build/os
+mkdir -p build/bootloader
+

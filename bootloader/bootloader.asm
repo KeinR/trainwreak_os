@@ -59,7 +59,7 @@ boot:
 
     hlt
 
-%include "src/bios_io.asm"
+%include "bios_io.asm"
 
 times 510 - ($-$$) db 0
 dw 0xAA55
