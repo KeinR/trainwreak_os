@@ -15,8 +15,8 @@ os:
 
 bootdisk: bootloader os
 	dd if=/dev/zero of=$(DISK) bs=512 count=2880
-	dd conv=notrunc if=bootloader.bin of=$(DISK) bs=512 count=1 seek=0
-	dd conv=notrunc if=kernel.bin of=$(DISK) bs=512 count=1 seek=1
+	dd conv=notrunc if=$(BLD) of=$(DISK) bs=512 count=1 seek=0
+	dd conv=notrunc if=$(OS) of=$(DISK) bs=512 count=1 seek=1
 
 run: bootdisk
 	qemu-system-i386 -machine q35 -fda $(DISK) -gdb tcp::26000 -S
