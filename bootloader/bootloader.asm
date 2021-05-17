@@ -8,7 +8,7 @@
 ; https://en.wikipedia.org/wiki/Master_boot_record
 ; https://www.nasm.us/xdoc/2.15.05/html/nasmdoc0.html
 
-org 0x7c00
+; org 0x7c00
 bits 16
 
 start: jmp boot
