@@ -7,7 +7,8 @@ end
 set disassembly-flavor intel
 
 set architecture i8086
-file build/bootloader/bootloader.bin.elf
+symbol-file build/bootloader/bootloader.bin.elf
+symbol-file build/os/kernel.elf
 target remote localhost:26000
 
 b *0x7c00

@@ -45,11 +45,13 @@ boot:
     mov si, nbooting
     call bios_print
 
-    ; Configure kernel env and transfer execution
+    ; Configure kernel data segment and transfer execution
     ; To where the code was loaded
     mov ax, 0x50
     mov ds, ax
-    jmp 0x50:0x0
+    jmp [0x18]
+
+    hlt
 
     ; Kernel returned (???)
     xor ax, ax
