@@ -14,10 +14,7 @@ start: jmp boot
 
 nloading db `Loading kernel....\r\n\0`
 nbooting db `Booting kernel....\r\n\0`
-
-; smol stack
-; Grows backwards, so bootloader safe (?)
-; BL_STACK_SIZE equ 0xa0
+ndiskfail db `Error: failed to read kernel!\r\n\0`
 
 boot:
     cli
@@ -29,50 +26,57 @@ boot:
     mov es, ax
     mov fs, ax
     mov gs, ax
-    mov ss, ax
+    ; mov ss, ax
     mov ds, ax
     jmp 0x0:ccs
     ccs:
 
-    mov sp, 0x7c00
+    ; More than enough for BIOS
+    mov sp, 0x100
     mov bp, sp
+    mov ax, 0x7c00 - 0x100
+    mov ss, ax
 
     call bios_cls
     mov si, nloading
     call bios_print
 
-    ; Read kernel from floppy
+    ; Read kernel from disk
 
-    mov ax, 0x50
+    mov si, 2 ; Read attempts
 
-    mov es, ax
-    xor bx, bx
-
-    mov al, 4 ; Sectors to read
-    mov ch, 0
-    mov cl, 2
-    mov dh, 0
-    mov dl, 0
-
-    mov ah, 0x02
-    int 0x13
+    mov al, 4 ; 512-byte sectors to read
+    mov dl, 0x80 ; Drive number, starts at 0x80 for god knows why
+    mov ch, 0 ; Cylander number
+    mov dh, 0 ; Head number
+    mov cl, 2 ; Starting sector number, counting from 1 (1 was bootloader)
+    mov bx, 0x500 ; Buffer address
+.read:
+    mov ah, 2 ; Read sectors
+    int 13h
+    jnc .good
+    dec si 
+    jc .fail ; Interesting hack, when si < 0 the CF flag is set
+    ; Failed to read disk
+    ; Reset disk and try again
+    xor ah, ah
+    int 13
+    jnc .read ; Only try again if reset was successful
+.fail:
+    mov si, ndiskfail
+    call bios_print
+    hlt
+.good:
 
     mov si, nbooting
     call bios_print
 
-    ; Configure kernel segments and transfer execution
-    ; to where the code was loaded
-    ; mov ax, 0x50
-    ; mov es, ax
-    ; mov fs, ax
-    ; mov gs, ax
-    ; mov ss, ax
-    ; mov ds, ax
+    ; Zero segments and transfer execution to kernel
     xor ax, ax
     mov es, ax
     jmp [0x500 + 0x18]
 
-    hlt
+    hlt ; Not actually needed
 
 %include "bios_io.asm"
 
