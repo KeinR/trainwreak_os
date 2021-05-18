@@ -9,21 +9,18 @@
 ; http://www.osdever.net/bkerndev/Docs/printing.htm
 ; https://software.intel.com/content/dam/develop/external/us/en/documents-tps/325383-sdm-vol-2abcd.pdf
 ; https://www.phatcode.net/res/221/files/vbe20.pdf (Got me thinking about "text mode")
+; 
+; Note that we use cdecl
+;
 
 
 ; Move cursor to screen loc and remember
 ; dl < x coord
 ; dh < y coord
 bios_movc:
-    push ax
-    push bx
-    
     mov ah, 0x02
     xor bh, bh
     int 10h
-
-    pop bx
-    pop ax
     ret
 
 ; Print char on screen at cursor
@@ -32,8 +29,6 @@ bios_movc:
 ; cx < repeat
 ; Note: Params are unmodified, except for cx
 bios_putc:
-    push ax
-
     .loop:
     cmp cx, 0
     je .end
@@ -44,15 +39,12 @@ bios_putc:
     dec cx
     jmp .loop
     .end:
-
-    pop ax
     ret
 
 ; print a string
 ; ds:si < zero-term string
 ; Note: ds is unmodified
 bios_print:
-    push ax
     mov ah, 0x0e
 
     .loop:
@@ -64,15 +56,12 @@ bios_print:
     jmp .loop
     .end:
 
-    pop ax
     ret
 
 ; Restore cursor to 0, 0
 bios_restc:
-    push dx
     xor dx, dx
     call bios_movc
-    pop dx
     ret
 
 ; Clears the screen
@@ -80,18 +69,10 @@ bios_cls:
     call bios_discurs
     call bios_restc
 
-    push ax
-    push bx
-    push cx
-
     mov al, ' '
     xor bh, bh
     mov cx, 80*50
     call bios_putc
-
-    pop cx
-    pop bx
-    pop ax
 
     call bios_restc
     call bios_encurs
@@ -99,30 +80,18 @@ bios_cls:
 
 ; Enable the cursor
 bios_encurs:
-    push ax
-    push cx
-
     mov ah, 0x01
     ; Flat boi
     mov ch, 11
     mov cl, 12
     int 10h
-
-    pop cx
-    pop ax
     ret
 
 ; Disable cursor
 bios_discurs:
-    push ax
-    push cx
-
     mov ah, 0x01
     mov ch, 0x3f
     int 10h
-
-    pop cx
-    pop ax
     ret
 
 

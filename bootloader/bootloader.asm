@@ -34,6 +34,7 @@ boot:
     jmp 0x0:ccs
     ccs:
 
+    mov sp, 0x7c00
     mov bp, sp
 
     call bios_cls
