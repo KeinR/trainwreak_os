@@ -7,9 +7,10 @@
 
 #define WIDTH 80
 #define HEIGHT 50 
+#define CLEAR_CC 0x0f20
+
 #define CURSOR_PORT_INIT 0x3d4
 #define CURSOR_PORT_DATA 0x3d5
-
 
 short buffer[WIDTH * HEIGHT];
 
@@ -24,6 +25,7 @@ void tty_enableCursor(unsigned char start, unsigned char end);
 int tty_linear(int x, int y);
 unsigned short tty_composeCharcode(unsigned char color, unsigned char chr);
 void tty_scroll();
+void tty_updateCursor();
 
 void tty_init() {
     tty_enableCursor(11, 12);
@@ -32,7 +34,7 @@ void tty_init() {
 
 void tty_cls() {
     for (int i = 0; i < WIDTH * HEIGHT; i++) {
-        tty_putCharcodeAt(0xff20, i);
+        tty_putCharcodeAt(CLEAR_CC, i);
     }
     tty_setCursorPos(0, 0);
 }
@@ -61,7 +63,6 @@ void tty_setCursorPos(int x, int y) {
 int tty_getWidth() {
     return WIDTH;
 }
-
 
 int tty_getHeight() {
     return HEIGHT;
@@ -92,6 +93,7 @@ void tty_putCharcode(short c) {
             cursorY++;
         }
     }
+    tty_updateCursor();
 }
 
 void tty_scroll() {
@@ -133,6 +135,10 @@ void tty_setCursorOffset(int offset) {
     outb(CURSOR_PORT_DATA, (unsigned char) (offset & 0xFF));
     outb(CURSOR_PORT_INIT, 0xe);
     outb(CURSOR_PORT_DATA, (unsigned char) ((offset >> 8) & 0xFF));
+}
+
+void tty_updateCursor() {
+    tty_setCursorPos(cursorX, cursorY);
 }
 
 
