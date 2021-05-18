@@ -8,23 +8,69 @@
 ; https://en.wikipedia.org/wiki/Master_boot_record
 ; https://www.nasm.us/xdoc/2.15.05/html/nasmdoc0.html
 
-; org 0x7c00
 bits 16
 
 start: jmp boot
 
-msg db `Hellow World!\r\nMight want to pack a spare set of knives...\r\n\0`
 nloading db `Loading kernel....\r\n\0`
 nbooting db `Booting kernel....\r\n\0`
-merr db `Kernel exited, that's not right...\r\n\0`
 
+; smol stack
+; Grows backwards, so bootloader safe (?)
+; BL_STACK_SIZE equ 0xa0
+
+; align 4
+; bl_stack resb BL_STACK_SIZE
 boot:
     cli
     cld
 
-    call bios_cls
-    mov si, nloading
-    call bios_print
+    ; Told linker to set offset to 0x7c00,
+    ; so segments offsets should be zero
+    xor ax, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    mov ds, ax
+    jmp 0x0:ccs
+    ccs:
+
+    ; mov ebp, bl_stack + BL_STACK_SIZE
+    mov bp, sp
+
+    lgdt [gdt_descriptor]
+
+    mov eax, cr0
+    or eax, 0x1
+    mov cr0, eax
+
+    jmp 0x8:flush_pipe
+
+gdt_null dd 0x0
+  dd 0x0
+gdt_code dw 0xffff
+  dw 0x0
+  db 0x0
+  db 10011010b
+  db 11001111b
+  db 0x0
+gdt_data dw 0xffff
+  dw 0x0
+  db 0x0
+  db 10010010b
+  db 11001111b
+  db 0x0
+gdt_descriptor dw word gdt_descriptor - gdt_null
+  dd dword gdt_null
+
+flush_pipe:
+
+    hlt
+
+    ; call bios_cls
+    ; mov si, nloading
+    ; call bios_print
 
     ; Read kernel from floppy
 
@@ -42,26 +88,24 @@ boot:
     mov ah, 0x02
     int 0x13
 
-    mov si, nbooting
-    call bios_print
+    ; mov si, nbooting
+    ; call bios_print
 
-    ; Configure kernel data segment and transfer execution
-    ; To where the code was loaded
-    mov ax, 0x50
-    mov ds, ax
-    jmp [0x18]
-
-    hlt
-
-    ; Kernel returned (???)
+    ; Configure kernel segments and transfer execution
+    ; to where the code was loaded
+    ; mov ax, 0x50
+    ; mov es, ax
+    ; mov fs, ax
+    ; mov gs, ax
+    ; mov ss, ax
+    ; mov ds, ax
     xor ax, ax
-    mov ds, ax
-    mov si, merr 
-    call bios_print
+    mov es, ax
+    jmp [0x500 + 0x18]
 
     hlt
 
-%include "bios_io.asm"
+; %include "bios_io.asm"
 
 times 510 - ($-$$) db 0
 dw 0xAA55
