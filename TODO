@@ -1,0 +1,17 @@
+
+- Paging
+- user mode
+- elf file parser
+- filesystem driver
+    - Unix file system? Minix? Ext2 seems like a good choice...
+- Audio driver
+- Pixel buffer mode
+- Map interrupts to syscalls
+- standard library (with syscalls using interrupts)
+- malloc function
+- Scheduler (aka multitasking)
+- Use stb_image for image decompression (re-map malloc, realloc, etc.), stb_vorbis...
+    - Or use own custom...
+- Get the actual VESA framebuffer location by looping through the modes
+
+
