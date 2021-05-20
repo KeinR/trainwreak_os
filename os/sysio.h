@@ -3,6 +3,7 @@
 
 char inb(short port);
 void outb(short port, char b);
+void iowait();
 
 #endif
 

@@ -18,8 +18,11 @@ bootdisk: bootloader os
 	dd conv=notrunc if=$(BLD) of=$(DISK) bs=512 count=1 seek=0
 	dd conv=notrunc if=$(OS) of=$(DISK) bs=512 count=$$(($(shell stat --printf="%s" $(OS))/512)) seek=1
 
+gdbrun: bootdisk
+	qemu-system-i386 -k en-us -machine q35 -hda $(DISK) -gdb tcp::26000 -S
+
 run: bootdisk
-	qemu-system-i386 -machine q35 -hda $(DISK) -gdb tcp::26000 -S
+	qemu-system-i386 -machine q35 -hda $(DISK)
 
 clean:
 	make -C bootloader clean

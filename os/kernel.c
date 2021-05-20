@@ -1,15 +1,27 @@
 
 #include "tty.h"
+#include "int.h"
+#include "sysio.h"
+
+extern void kern_test_interrupts();
 
 void kmain() {
-    // tty_putc(0xFF58, 0);
-    // short *add = (short *)(0xb8000);
-    // int F = add[0];
-    // add[0] = 0xFF58;
     tty_init();
     tty_print(0x02, "Kernel booted into protected mode!");
-    // tty_putc(0xFF58, 5);
-    while(1);
+    int_init();
+    // kern_test_interrupts();
+    while(1) {
+        /*
+        outb(0xf0);
+        iowait();
+        char code;
+        code = inb()
+        if (code != 0xfa) continue;
+        char 
+
+        int faf = code / 2;
+        */
+    }
 }
 
 
