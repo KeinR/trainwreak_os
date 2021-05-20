@@ -1,6 +1,7 @@
 #include "tty.h"
 #include "sysio.h"
 #include "math.h"
+#include "keyboard.h"
 
 #define FRAMEBUFFER_ADD 0xb8000
 #define FRAMEBUFFER ((short*)FRAMEBUFFER_ADD)
@@ -17,19 +18,28 @@ short buffer[WIDTH * HEIGHT];
 int cursorX = 0;
 int cursorY = 0;
 
-int tty_getCursorOffset();
-void tty_putCharcodeAt(short c, int index);
-void tty_putCharcode(short c);
-void tty_setCursorOffset(int offset);
-void tty_enableCursor(unsigned char start, unsigned char end);
-int tty_linear(int x, int y);
-unsigned short tty_composeCharcode(unsigned char color, unsigned char chr);
-void tty_scroll();
-void tty_updateCursor();
+static int tty_getCursorOffset();
+static void tty_putCharcodeAt(short c, int index);
+static void tty_putCharcode(short c);
+static void tty_setCursorOffset(int offset);
+static void tty_enableCursor(unsigned char start, unsigned char end);
+static int tty_linear(int x, int y);
+static unsigned short tty_composeCharcode(unsigned char color, unsigned char chr);
+static void tty_scroll();
+static void tty_updateCursor();
+static void tty_input(struct kb_key key);
 
 void tty_init() {
     tty_enableCursor(11, 12);
     tty_cls();
+    kb_setHandle(TTY_KB_HANDLE_INDEX, tty_input);
+}
+
+void tty_input(struct kb_key key) {
+    // tmp 
+    if (key.isChar) {
+        tty_putChar(0x0F, key.c);
+    }
 }
 
 void tty_cls() {
