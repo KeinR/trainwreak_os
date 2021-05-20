@@ -20,7 +20,34 @@ static void int_setIDT(int index, void *address, uint16_t type, uint16_t selecto
 static void int_setKernelIDT(int index, void *address);
 void int_handler(); // Ref int.asm
 
-// int.asm
+
+extern void int_handler_32();
+
+
+// Processsor exceptions
+extern void int_handler_0();
+extern void int_handler_1();
+extern void int_handler_2();
+extern void int_handler_3();
+extern void int_handler_4();
+extern void int_handler_5();
+extern void int_handler_6();
+extern void int_handler_7();
+extern void int_handler_8();
+extern void int_handler_9();
+extern void int_handler_10();
+extern void int_handler_11();
+extern void int_handler_12();
+extern void int_handler_13();
+extern void int_handler_14();
+extern void int_handler_15();
+extern void int_handler_16();
+extern void int_handler_17();
+extern void int_handler_18();
+extern void int_handler_19();
+extern void int_handler_20();
+extern void int_handler_21();
+// PIC Interrupts
 extern void int_handler_32();
 extern void int_handler_33();
 extern void int_handler_34();
@@ -54,10 +81,35 @@ void int_setKernelIDT(int index, void *address) {
 
 void int_init() {
     for (int i = 0; i < 256; i++) intHandleTab[i] = 0;
-    // TEMP
-    for (int i = 0; i < 256; i++) {
-        int_setKernelIDT(i, int_handler_48);
-    }
+
+    // Just found out you can do this in VIM:
+    // for i in range(low, high) | put 'something'.i.'something' | endfor
+    // Fuck I love VIM, I need to allocate some time to really learn everything
+    // That and the NASM manuel...
+    // There's a lot of stuff I need to read.
+    // Summer's gonna' be fun
+    int_setKernelIDT(0, int_handler_0);
+    int_setKernelIDT(1, int_handler_1);
+    int_setKernelIDT(2, int_handler_2);
+    int_setKernelIDT(3, int_handler_3);
+    int_setKernelIDT(4, int_handler_4);
+    int_setKernelIDT(5, int_handler_5);
+    int_setKernelIDT(6, int_handler_6);
+    int_setKernelIDT(7, int_handler_7);
+    int_setKernelIDT(8, int_handler_8);
+    int_setKernelIDT(9, int_handler_9);
+    int_setKernelIDT(10, int_handler_10);
+    int_setKernelIDT(11, int_handler_11);
+    int_setKernelIDT(12, int_handler_12);
+    int_setKernelIDT(13, int_handler_13);
+    int_setKernelIDT(14, int_handler_14);
+    int_setKernelIDT(15, int_handler_15);
+    int_setKernelIDT(16, int_handler_16);
+    int_setKernelIDT(17, int_handler_17);
+    int_setKernelIDT(18, int_handler_18);
+    int_setKernelIDT(19, int_handler_19);
+    int_setKernelIDT(20, int_handler_20);
+    int_setKernelIDT(21, int_handler_21);
 
     int_setKernelIDT(32, int_handler_32);
     int_setKernelIDT(33, int_handler_33);
